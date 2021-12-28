@@ -11,7 +11,8 @@ services:
     command:
       - "--log.level=DEBUG"
       # enable traefik dashboard
-      - "--api.insecure=true"
+      - "--api=true"
+      - "--api.dashboard=true"
       # discover containers using the docker api
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
@@ -27,26 +28,30 @@ services:
       - "--entrypoints.web.http.redirections.entrypoint.scheme=https"
       - "--entrypoints.websecure.address=:443"
       # tls config for websecure listener
-      - --entrypoints.websecure.http.tls=true
-      - --entrypoints.websecure.http.tls.certResolver=letsencrypt
-      - --entrypoints.websecure.http.tls.domains[0].main=${DOMAINNAME}
-      - --entrypoints.websecure.http.tls.domains[0].sans=*.${DOMAINNAME}
+      - "--entrypoints.websecure.http.tls=true"
+      - "--entrypoints.websecure.http.tls.certResolver=letsencrypt"
+      - "--entrypoints.websecure.http.tls.domains[0].main=${DOMAINNAME}"
+      - "--entrypoints.websecure.http.tls.domains[0].sans=*.${DOMAINNAME}"
     ports:
       - "80:80"
       - "443:443"
-      - "8080:8080"
+    expose:
+      - 8080
     volumes:
       - "./letsencrypt:/letsencrypt"
       - "/etc/localtime:/etc/localtime:ro"
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.traefik.rule=Host(`${DOMAINNAME}`)"
-      - "traefik.http.routers.traefik.entrypoints=websecure"
-      - "traefik.http.routers.traefik.tls.certresolver=letsencrypt"
+      - "traefik.port=8080"
       - "traefik.http.routers.traefik.service=api@internal"
-      - "traefik.http.routers.traefik.middlewares=strip"
-      - "traefik.http.middlewares.strip.stripprefix.prefixes=/traefik"
+      - "traefik.http.routers.traefik.rule=Host(`traefik.${DOMAINNAME}`)"
+      - "traefik.http.routers.traefik.middlewares=auth"
+      - "traefik.http.middlewares.auth.basicauth.users=${HTPASSWD}"
+      # - "traefik.http.routers.traefik.entrypoints=websecure"
+      # - "traefik.http.routers.traefik.tls.certresolver=letsencrypt"
+      # - "traefik.http.routers.traefik.middlewares=strip"
+      # - "traefik.http.middlewares.strip.stripprefix.prefixes=/traefik"
 
   whoami:
     image: "traefik/whoami"
