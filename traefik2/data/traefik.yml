@@ -1,5 +1,9 @@
 api:
   dashboard: true
+  debug: true
+
+pilot:
+  dashboard: false
 
 entryPoints:
   web:
@@ -8,7 +12,6 @@ entryPoints:
       redirections:
         entryPoint:
           to: websecure
-
   websecure:
     address: :443
     http:
@@ -18,15 +21,12 @@ entryPoints:
       tls:
         certResolver: letsencrypt
 
-pilot:
-  dashboard: false
-
 providers:
   docker:
     endpoint: "unix:///var/run/docker.sock"
     exposedByDefault: false
   file:
-    filename: /configurations/dynamic.yml
+    filename: /config/dynamic.yml
 
 certificatesResolvers:
   letsencrypt:
@@ -34,7 +34,6 @@ certificatesResolvers:
       email: $CLOUDFLARE_EMAIL
       caServer: "https://acme-staging-v02.api.letsencrypt.org/directory"
       storage: acme.json
-      keyType: EC384
       dnsChallenge:
         provider: cloudflare
         resolvers:

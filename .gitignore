@@ -13,7 +13,7 @@
 .nfs*
 
 # secrets
-.env*
+*.env*
 
 # backups
 backup**
