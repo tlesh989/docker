@@ -2,12 +2,12 @@ services:
   traefik:
     image: traefik:latest
     container_name: traefik
-    env_file: 
-      - common.env
-      - cloudflare.env
     restart: always
     security_opt:
       - no-new-privileges:true
+    environment:
+      - CLOUDFLARE_EMAIL=$CLOUDFLARE_EMAIL
+      - CLOUDFLARE_API_KEY=$CLOUDFLARE_API_KEY
     command:
       - "--log.level=DEBUG"
       # enable traefik dashboard
@@ -51,8 +51,6 @@ services:
   whoami:
     image: "traefik/whoami"
     container_name: "simple-service"
-    env_file: 
-      - common.env
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.whoami.rule=Host(`whoami.${DOMAINNAME}`)"
@@ -62,8 +60,6 @@ services:
   librespeed:
     image: ghcr.io/linuxserver/librespeed
     container_name: librespeed
-    env_file: 
-      - common.env
     restart: unless-stopped
     ports:
       - 80
