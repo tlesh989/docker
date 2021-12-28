@@ -2,7 +2,6 @@ services:
   db:
     image: linuxserver/mariadb:latest
     container_name: nextcloud_db
-    command: --transaction-isolation=READ-COMMITTED --binlog-format=ROW
     volumes:
       - nextcloud-db:/var/lib/mysql
       - /etc/localtime:/etc/localtime:ro
@@ -48,9 +47,9 @@ services:
       - no-new-privileges:true
     restart: always
     environment:
-      - PUID=1001
-      - PGID=1001
-      - TZ=America/Detroit
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
     labels:
       - "traefik.enable=true"
       - "traefik.docker.network=traefik_proxy"
