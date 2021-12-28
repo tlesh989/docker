@@ -62,6 +62,8 @@ services:
   whoami:
     image: "traefik/whoami"
     container_name: "simple-service"
+    networks:
+      - traefik_proxy
     labels:
       - "traefik.enable=true"
       - "traefik.docker.network=traefik_proxy"
