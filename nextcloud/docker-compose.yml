@@ -1,0 +1,63 @@
+services: 
+  db:
+    image: linuxserver/mariadb:latest
+    container_name: nextcloud_db
+    command: --transaction-isolation=READ-COMMITTED --binlog-format=ROW
+    volumes:
+      - nextcloud-db:/var/lib/mysql
+      - /etc/localtime:/etc/localtime:ro
+    networks:
+      - default
+    security_opt:
+      - no-new-privileges:true
+    restart: always
+
+  redis:
+    image: redis:alpine
+    container_name: nextcloud_redis
+    restart: always
+    networks:
+      - default
+    security_opt:
+      - no-new-privileges:true
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+
+  nextcloud:
+    depends_on:
+      - redis
+      - db
+    image: linuxserver/nextcloud:latest 
+    container_name: nextcloud
+    volumes:
+      - "/etc/localtime:/etc/localtime:ro"
+      - "./config:/config"
+      - "./data:/data"
+    networks:
+      - traefik_proxy
+      - default
+    security_opt:
+      - no-new-privileges:true
+    restart: always
+    environment:
+      - PUID=1001
+      - PGID=1001
+      - TZ=America/Detroit
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=traefik_proxy"
+      ## TCP Routers
+      - "traefik.tcp.routers.nextcloud-tcp.entrypoints=https"
+      - "traefik.tcp.routers.nextcloud-tcp.rule=Host(`nextcloud.${DOMAINNAME}`)"
+      - "traefik.tcp.routers.nextcloud-tcp.tls.certresolver=letsencrypt"
+      - "traefik.tcp.routers.nextcloud-tcp.tls.passthrough=true"
+      ## TCP Services
+      - "traefik.tcp.routers.nextcloud-tcp.service=nextcloud-tcp-svc"
+      - "traefik.tcp.services.nextcloud-tcp-svc.loadbalancer.server.port=443"
+
+networks:
+  traefik_proxy:
+    external: true
+
+volumes:
+  nextcloud-db:
