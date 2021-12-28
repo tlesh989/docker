@@ -11,7 +11,7 @@ services:
       - CLOUDFLARE_EMAIL=$CLOUDFLARE_EMAIL
       - CLOUDFLARE_API_KEY=$CLOUDFLARE_API_KEY
     command:
-      - "--log.level=DEBUG"
+      #- "--log.level=DEBUG"
       - "--accessLog=true"
       - "--accessLog.filePath=/logs/access.log"
       - "--accessLog.bufferingSize=100"
