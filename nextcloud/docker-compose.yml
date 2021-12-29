@@ -58,14 +58,7 @@ services:
       - "traefik.http.routers.nextcloud.tls=true"
       - "traefik.http.routers.nextcloud.tls.certresolver=letsencrypt"
       - "traefik.http.routers.nextcloud.service=nextcloud"
-      - "traefik.http.routers.nextcloud.middlewares=nextcloud-regex,nextcloud-headers"
-      - "traefik.http.services.nextcloud.loadbalancer.server.port=443"
-      - "traefik.http.services.nextcloud.loadbalancer.server.scheme=websecure"
-      - "traefik.http.middlewares.nextcloud-regex.redirectregex.regex=https://(.*)/.well-known/(card|cal)dav"
-      - "traefik.http.middlewares.nextcloud-regex.redirectregex.replacement=https://$$1/remote.php/dav/"
-      - "traefik.http.middlewares.nextcloud-regex.redirectregex.permanent=true"
-      - "traefik.http.middlewares.nextcloud-headers.headers.customFrameOptionsValue=SAMEORIGIN"
-      - "traefik.http.middlewares.nextcloud-headers.headers.stsSeconds=15552000"
+      - "traefik.http.services.nextcloud.loadbalancer.server.port=80"
 
 networks:
   traefik_proxy:
