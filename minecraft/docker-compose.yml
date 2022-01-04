@@ -4,10 +4,10 @@ services:
     container_name: minecraft
     environment:
       EULA: "TRUE"
-      GAMEMODE: survival
-      DIFFICULTY: easy
-      SERVER-NAME: "Smashtopia"
-      LEVEL-NAME: "Pizzaville"
+      GAMEMODE: "survival"
+      DIFFICULTY: "easy"
+      SERVER_NAME: "Smashtopia"
+      LEVEL_NAME: "Pizzaville"
     ports:
       - 19132:19132/udp
     volumes:
