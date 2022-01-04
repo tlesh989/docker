@@ -1,6 +1,7 @@
 services:
-  bds:
+  minecraft:
     image: itzg/minecraft-bedrock-server
+    container_name: minecraft
     environment:
       EULA: "TRUE"
       GAMEMODE: survival
